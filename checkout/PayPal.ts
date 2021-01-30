@@ -23,8 +23,7 @@ const PayPalConnection: ProcessorConnection<
   website: 'https://paypal.com',
 
   configuration: {
-    accountId:
-      'sb-o9s3t4941374@business.example.com',
+    accountId: 'sb-o9s3t4941374@business.example.com',
     clientId: 'AcOJoN_FIV4BzpF7g27vx_chsyhGIhEub6e_gay_Y3wK0-3Uq7P3CzV5kFRCJR81rYH4YhFxFx1Bxn4u',
     clientSecret: 'EEC7qhwhzhX5RyjaFpjh_LYEM2sZAro34fenzXUCbPF9410femb8Gp21S3JCOxKeCKB_aUu13tBVkk6S',
   },
