@@ -35,6 +35,16 @@ const PayPalConnection: ProcessorConnection<
   authorize(
     request: RawAuthorizationRequest<ClientIDSecretCredentials, PayPalOrder>,
   ): Promise<ParsedAuthorizationResponse> {
+
+    HTTPClient.request('https://api-m.sandbox.paypal.com/v2/checkout/orders/'+ request.paymentMethod.orderId + '/authorize', {
+      headers: {
+        "Authentication": "Basic " + request.processorConfig.clientId + ':' + request.processorConfig.clientSecret,
+        "content-type": "application/json"
+      },
+      method: 'post',
+      body: ``
+    })
+
     throw new Error('Not Implemented');
   },
 
@@ -45,6 +55,14 @@ const PayPalConnection: ProcessorConnection<
   cancel(
     request: RawCancelRequest<ClientIDSecretCredentials>,
   ): Promise<ParsedCaptureResponse> {
+    HTTPClient.request('https://api-m.sandbox.paypal.com/v2/payments/authorizations/'+ request.processorTransactionId + '/void', {
+      headers: {
+        "Authentication": "Basic " + request.processorConfig.clientId + ':' + request.processorConfig.clientSecret,
+        "content-type": "application/json"
+      },
+      method: 'post',
+      body: ``
+    })
     throw new Error('Not Implemented');
   },
 

@@ -20,11 +20,9 @@ function renderPayPalButton() {
     */
     createOrder: function(data, actions) {
       return actions.order.create({
+        intent: 'AUTHORIZE',
         purchase_units: [{
-          amount: {
-            value: '12.99',
-            currency_code: 'EUR'
-          }
+          amount: { value: '12.99', currency_code: 'EUR' }
         }]
       })
     },
