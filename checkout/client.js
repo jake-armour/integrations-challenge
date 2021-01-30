@@ -13,6 +13,11 @@ function renderPayPalButton() {
    * that you receive from PayPal
    */
   const options = {
+    /*
+    * createOrder
+    *
+    * Creates an order for a single purchase unit with the value of EUR 12.99
+    */
     createOrder: function(data, actions) {
       return actions.order.create({
         purchase_units: [{
@@ -23,6 +28,12 @@ function renderPayPalButton() {
         }]
       })
     },
+    /*
+    * onApprove
+    *
+    * Triggered when PayPal approves the transaction, calls the onAuthorizeTransaction
+    * method using the orderID that PayPal provides
+    */
     onApprove: function(data, actions) {
       onAuthorizeTransaction(data.orderID)
     }
