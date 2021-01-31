@@ -80,8 +80,8 @@ const PayPalConnection: ProcessorConnection<
         case 201:
           if(json.purchase_units[0].payments.authorizations[0].status == 'DENIED') {
             authResponse = {
-              transactionStatus: 'DECLINED',
-              declineReason: 'Authorization Declined'
+              declineReason: 'Authorization Declined',
+              transactionStatus: 'DECLINED'
             }
           } else {
             authResponse = {
@@ -149,10 +149,29 @@ const PayPalConnection: ProcessorConnection<
       body: ``
     })
     .then((response) => {
-      let authResponse: ParsedCaptureResponse = {
-        transactionStatus: 'CANCELLED'
+      let voidResponse: ParsedCaptureResponse;
+
+      switch(response.statusCode) {
+        case 204:
+          voidResponse = {
+            transactionStatus: 'CANCELLED'
+          }
+          break;
+        case 422:
+          let json = JSON.parse(response.responseText)
+          voidResponse = {
+            errorMessage: json.name + ': ' + json.details.description,
+            transactionStatus: 'FAILED'
+          }
+        default:
+          voidResponse = {
+            errorMessage: 'Issue with API call: No status code matched',
+            transactionStatus: 'FAILED'
+          }
+          break;
       }
-      return authResponse
+
+      return voidResponse
     });
   },
 
