@@ -76,6 +76,14 @@ const PayPalConnection: ProcessorConnection<
     .then((response) => {
       let json = JSON.parse(response.responseText);
       let authResponse: ParsedAuthorizationResponse;
+
+      /*
+      * switch statement on status code of the response
+      *
+      * - 201: assumes a successful API call, checks for declined status
+      * - 422: encountered an error
+      * - default: assumes an API call error
+      */
       switch(response.statusCode) {
         case 201:
           if(json.purchase_units[0].payments.authorizations[0].status == 'DENIED') {
@@ -151,6 +159,13 @@ const PayPalConnection: ProcessorConnection<
     .then((response) => {
       let voidResponse: ParsedCaptureResponse;
 
+      /*
+      * switch statement on status code of the response
+      *
+      * - 204: assumes a successful cancellation
+      * - 422: encountered an error
+      * - default: assumes an API call error
+      */
       switch(response.statusCode) {
         case 204:
           voidResponse = {

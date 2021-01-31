@@ -58,6 +58,16 @@ function onAuthorizeTransaction(orderId) {
     .then((r) => r.json())
     .then((response) => {
       authResponse = response;
+
+      /* 
+      * Utilises the response to check the status of the authorisation
+      * 
+      * - If a processorTransactionId is defined, the client assumes the authorisation
+      *   was successful and enables the cancellation button
+      * - If there isn't a processorTransactionId, then it looks to see if the
+      *   authorisation was declined or just encountered an error and then logs this
+      *   to the console
+      */
       if(authResponse.processorTransactionId) {
         document.getElementById('cancel-button').removeAttribute('disabled');
       } else {
@@ -75,6 +85,14 @@ function onCancelTransaction() {
   })
     .then((response) => {
       voidResponse = response
+
+      /* 
+      * Utilises the response to check if an error message was defined 
+      * 
+      * - If it was, it logs the error to the console.
+      * - If it wasn't, the client assumes that the cancellation was successful and
+      *   re-disables the cancellation button
+      */
       if(voidResponse.errorMessage) console.error(authResponse.errorMessage)
       else document.getElementById('cancel-button').setAttribute('disabled')
     });
