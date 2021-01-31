@@ -1,3 +1,5 @@
+const { response } = require("express");
+
 let authResponse = null;
 
 window.primer.setup().then(onLoad);
@@ -68,5 +70,8 @@ function onCancelTransaction() {
     method: 'post',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ orderId: authResponse.processorTransactionId }),
-  });
+  })
+    .then((response) => {
+      document.getElementById('cancel-button').setAttribute('disabled');
+    });
 }

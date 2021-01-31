@@ -58,14 +58,13 @@ const PayPalConnection: ProcessorConnection<
     *       value: 'FAILED'
     * 
     *   let example: ParsedAuthorizationResponse = {
-    *     processorTransactionId: 'IDTest'
+    *     processorTransactionId: {authorization ID}
     *     transactionStatus: 'AUTHORIZED'
     *   }
     * 
     *   Client ID + Secret Auth giving me certificate errors so currently using access token
     *     "Authorization": "Basic " + request.processorConfig.clientId + ':' + request.processorConfig.clientSecret,
     */
-
     return HTTPClient.request('https://api-m.sandbox.paypal.com/v2/checkout/orders/'+ request.paymentMethod.orderId + '/authorize', {
       headers: {
         "Authorization": "Bearer A21AAKD9uSRut66slYh067vlc1Sfwp2q_U7fKxcelSLzPRGZErt2v4Bb1WyX0MmkaFARP3rPHLZkuuTm7fUlIwQ5DzFe4y0iA",
@@ -77,7 +76,10 @@ const PayPalConnection: ProcessorConnection<
     .then((r) => JSON.parse(r.responseText))
     .then((response) => {
       let authResponse: ParsedAuthorizationResponse = {
-        processorTransactionId: response.id,
+        /* If it needs to cancel the order */
+        //processorTransactionId: response.id,
+        /* If it needs to void the authorization */
+        processorTransactionId: response.purchase_units[0].payments.authorizations[0].id,
         transactionStatus: 'AUTHORIZED'
       }
       return authResponse
@@ -117,7 +119,7 @@ const PayPalConnection: ProcessorConnection<
     *     "Authorization": "Basic " + request.processorConfig.clientId + ':' + request.processorConfig.clientSecret,
     */
 
-    HTTPClient.request('https://api-m.sandbox.paypal.com/v2/payments/authorizations/'+ request.processorTransactionId + '/void', {
+    return HTTPClient.request('https://api-m.sandbox.paypal.com/v2/payments/authorizations/'+ request.processorTransactionId + '/void', {
       headers: {
         "Authorization": "Bearer A21AAKD9uSRut66slYh067vlc1Sfwp2q_U7fKxcelSLzPRGZErt2v4Bb1WyX0MmkaFARP3rPHLZkuuTm7fUlIwQ5DzFe4y0iA",
         "content-type": "application/json"
@@ -125,10 +127,12 @@ const PayPalConnection: ProcessorConnection<
       method: 'post',
       body: ``
     })
-
-    console.log(request.processorTransactionId);
-
-    throw new Error('Not Implemented');
+    .then((response) => {
+      let authResponse: ParsedCaptureResponse = {
+        transactionStatus: 'CANCELLED'
+      }
+      return authResponse
+    });
   },
 
   /**
