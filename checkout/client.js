@@ -94,6 +94,6 @@ function onCancelTransaction() {
       *   re-disables the cancellation button
       */
       if(voidResponse.errorMessage) console.error(authResponse.errorMessage)
-      else document.getElementById('cancel-button').setAttribute('disabled')
+      else document.getElementById('cancel-button').setAttribute('disabled', true)
     });
 }

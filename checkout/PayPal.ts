@@ -8,7 +8,7 @@ import {
   RawCancelRequest,
   RawCaptureRequest,
 } from '@primer-io/app-framework';
-
+var base64 = require('base-64');
 /**
  * Use the HTTP Client to make requests to PayPal's orders API
  */
@@ -64,10 +64,13 @@ const PayPalConnection: ProcessorConnection<
     * 
     *   Client ID + Secret Auth giving me certificate errors so currently using access token
     *     "Authorization": "Basic " + request.processorConfig.clientId + ':' + request.processorConfig.clientSecret,
+        "Authorization": "Bearer A21AAKD9uSRut66slYh067vlc1Sfwp2q_U7fKxcelSLzPRGZErt2v4Bb1WyX0MmkaFARP3rPHLZkuuTm7fUlIwQ5DzFe4y0iA",
     */
+
+    let auth = base64.encode(request.processorConfig.clientId + ':' + request.processorConfig.clientSecret);
     return HTTPClient.request('https://api-m.sandbox.paypal.com/v2/checkout/orders/'+ request.paymentMethod.orderId + '/authorize', {
       headers: {
-        "Authorization": "Bearer A21AAKD9uSRut66slYh067vlc1Sfwp2q_U7fKxcelSLzPRGZErt2v4Bb1WyX0MmkaFARP3rPHLZkuuTm7fUlIwQ5DzFe4y0iA",
+        "Authorization": "Basic " + auth,
         "content-type": "application/json"
       },
       method: 'post',
@@ -148,9 +151,10 @@ const PayPalConnection: ProcessorConnection<
     *     "Authorization": "Basic " + request.processorConfig.clientId + ':' + request.processorConfig.clientSecret,
     */
 
+    let auth = base64.encode(request.processorConfig.clientId + ':' + request.processorConfig.clientSecret);
     return HTTPClient.request('https://api-m.sandbox.paypal.com/v2/payments/authorizations/'+ request.processorTransactionId + '/void', {
       headers: {
-        "Authorization": "Bearer A21AAKD9uSRut66slYh067vlc1Sfwp2q_U7fKxcelSLzPRGZErt2v4Bb1WyX0MmkaFARP3rPHLZkuuTm7fUlIwQ5DzFe4y0iA",
+        "Authorization": "Basic " + auth,
         "content-type": "application/json"
       },
       method: 'post',
