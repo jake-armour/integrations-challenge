@@ -73,16 +73,30 @@ const PayPalConnection: ProcessorConnection<
       method: 'post',
       body: ``
     })
-    .then((r) => JSON.parse(r.responseText))
     .then((response) => {
-      let authResponse: ParsedAuthorizationResponse = {
-        /* If it needs to cancel the order */
-        //processorTransactionId: response.id,
-        /* If it needs to void the authorization */
-        processorTransactionId: response.purchase_units[0].payments.authorizations[0].id,
-        transactionStatus: 'AUTHORIZED'
+      let json = JSON.parse(response.responseText);
+      let authResponse: ParsedAuthorizationResponse;
+      switch(response.statusCode) {
+        case 201:
+          authResponse = {
+            processorTransactionId: json.purchase_units[0].payments.authorizations[0].id,
+            transactionStatus: 'AUTHORIZED'
+          }
+          break;
+        case 422:
+          authResponse = {
+            errorMessage: json.name + ': ' + json.details.description,
+            transactionStatus: 'FAILED'
+          }
+        default:
+          authResponse = {
+            errorMessage: 'Issue with API call: No status code matched',
+            transactionStatus: 'FAILED'
+          }
+          break;
       }
-      return authResponse
+
+        return authResponse
     });
   },
 

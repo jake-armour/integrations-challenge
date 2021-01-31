@@ -1,5 +1,3 @@
-const { response } = require("express");
-
 let authResponse = null;
 
 window.primer.setup().then(onLoad);
@@ -59,9 +57,12 @@ function onAuthorizeTransaction(orderId) {
   })
     .then((r) => r.json())
     .then((response) => {
-      console.log(response);
       authResponse = response;
-      document.getElementById('cancel-button').removeAttribute('disabled');
+      if(authResponse.processorTransactionId) {
+        document.getElementById('cancel-button').removeAttribute('disabled');
+      } else {
+        console.error(authResponse.errorMessage)
+      }
     });
 }
 
@@ -71,7 +72,7 @@ function onCancelTransaction() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ orderId: authResponse.processorTransactionId }),
   })
-    .then((response) => {
+    .then(() => {
       document.getElementById('cancel-button').setAttribute('disabled');
     });
 }
