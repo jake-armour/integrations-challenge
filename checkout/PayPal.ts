@@ -36,16 +36,52 @@ const PayPalConnection: ProcessorConnection<
     request: RawAuthorizationRequest<ClientIDSecretCredentials, PayPalOrder>,
   ): Promise<ParsedAuthorizationResponse> {
 
-    HTTPClient.request('https://api-m.sandbox.paypal.com/v2/checkout/orders/'+ request.paymentMethod.orderId + '/authorize', {
+    /*
+    * authorize
+    * 
+    * API Endpoint:
+    *   https://api-m.sandbox.paypal.com/v2/checkout/orders/{orderID}/authorize
+    * 
+    * Returns:
+    *   Promise<ParsedAuthorizationResponse>
+    *     <IAuthResponse>
+    *       { processorTransactionId: string }
+    *       type: TransactionStatus
+    *       value: 'AUTHORIZED', 'SETTLING', 'SETTLED' or 'CANCELLED'
+    *     <IAuthResponse>
+    *       { declineReason: string }
+    *       type: TransactionStatus
+    *       value: 'DECLINED'
+    *     <IAuthResponse>
+    *       { errorMessage: string }
+    *       type: TransactionStatus
+    *       value: 'FAILED'
+    * 
+    *   let example: ParsedAuthorizationResponse = {
+    *     processorTransactionId: 'IDTest'
+    *     transactionStatus: 'AUTHORIZED'
+    *   }
+    * 
+    *   Client ID + Secret Auth giving me certificate errors so currently using access token
+    *     "Authorization": "Basic " + request.processorConfig.clientId + ':' + request.processorConfig.clientSecret,
+    */
+
+    return HTTPClient.request('https://api-m.sandbox.paypal.com/v2/checkout/orders/'+ request.paymentMethod.orderId + '/authorize', {
       headers: {
-        "Authentication": "Basic " + request.processorConfig.clientId + ':' + request.processorConfig.clientSecret,
+        "Authorization": "Bearer A21AAKD9uSRut66slYh067vlc1Sfwp2q_U7fKxcelSLzPRGZErt2v4Bb1WyX0MmkaFARP3rPHLZkuuTm7fUlIwQ5DzFe4y0iA",
         "content-type": "application/json"
       },
       method: 'post',
       body: ``
     })
-
-    throw new Error('Not Implemented');
+    .then((r) => JSON.parse(r.responseText))
+    .then((response) => {
+      let authResponse: ParsedAuthorizationResponse = {
+        processorTransactionId: response.id,
+        transactionStatus: 'AUTHORIZED'
+      }
+      return authResponse
+    });
   },
 
   /**
@@ -55,14 +91,43 @@ const PayPalConnection: ProcessorConnection<
   cancel(
     request: RawCancelRequest<ClientIDSecretCredentials>,
   ): Promise<ParsedCaptureResponse> {
+
+    /*
+    * cancel
+    * 
+    * API Endpoint:
+    *   https://api-m.sandbox.paypal.com/v2/payments/authorizations/{authorisationID}/void
+    * 
+    * Returns:
+    *   Promise<ParsedCaptureResponse>
+    *     transactionStatus: required
+    *       type: TransactionStatus
+    *       value: 'AUTHORIZED', 'DECLINED', 'FAILED', 'SETTLING', 'SETTLED' or 'CANCELLED'
+    *     declineReason: optional
+    *       type: DeclineReason 
+    *       value: 'DO_NOT_HONOR', 'INSUFFICIENT FUNDS' or 'UNKNOWN'
+    *     errorMesage: optional
+    *       type: string
+    * 
+    *   let example: ParsedCaptureResponse = {
+    *     transactionStatus: 'AUTHORIZED'
+    *   }
+    * 
+    *   Client ID + Secret Auth giving me certificate errors so currently using access token
+    *     "Authorization": "Basic " + request.processorConfig.clientId + ':' + request.processorConfig.clientSecret,
+    */
+
     HTTPClient.request('https://api-m.sandbox.paypal.com/v2/payments/authorizations/'+ request.processorTransactionId + '/void', {
       headers: {
-        "Authentication": "Basic " + request.processorConfig.clientId + ':' + request.processorConfig.clientSecret,
+        "Authorization": "Bearer A21AAKD9uSRut66slYh067vlc1Sfwp2q_U7fKxcelSLzPRGZErt2v4Bb1WyX0MmkaFARP3rPHLZkuuTm7fUlIwQ5DzFe4y0iA",
         "content-type": "application/json"
       },
       method: 'post',
       body: ``
     })
+
+    console.log(request.processorTransactionId);
+
     throw new Error('Not Implemented');
   },
 
