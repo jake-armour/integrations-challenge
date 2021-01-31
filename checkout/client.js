@@ -61,7 +61,8 @@ function onAuthorizeTransaction(orderId) {
       if(authResponse.processorTransactionId) {
         document.getElementById('cancel-button').removeAttribute('disabled');
       } else {
-        console.error(authResponse.errorMessage)
+        if(authResponse.errorMessage) console.error(authResponse.errorMessage)
+        else console.error(authResponse.declineReason)
       }
     });
 }

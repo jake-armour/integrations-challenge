@@ -78,9 +78,16 @@ const PayPalConnection: ProcessorConnection<
       let authResponse: ParsedAuthorizationResponse;
       switch(response.statusCode) {
         case 201:
-          authResponse = {
-            processorTransactionId: json.purchase_units[0].payments.authorizations[0].id,
-            transactionStatus: 'AUTHORIZED'
+          if(json.purchase_units[0].payments.authorizations[0].status == 'DENIED') {
+            authResponse = {
+              transactionStatus: 'DECLINED',
+              declineReason: 'Authorization Declined'
+            }
+          } else {
+            authResponse = {
+              processorTransactionId: json.purchase_units[0].payments.authorizations[0].id,
+              transactionStatus: 'AUTHORIZED'
+            }
           }
           break;
         case 422:
