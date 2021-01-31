@@ -58,13 +58,10 @@ const PayPalConnection: ProcessorConnection<
     *       value: 'FAILED'
     * 
     *   let example: ParsedAuthorizationResponse = {
-    *     processorTransactionId: {authorization ID}
+    *     processorTransactionId: authorizationID
     *     transactionStatus: 'AUTHORIZED'
     *   }
     * 
-    *   Client ID + Secret Auth giving me certificate errors so currently using access token
-    *     "Authorization": "Basic " + request.processorConfig.clientId + ':' + request.processorConfig.clientSecret,
-        "Authorization": "Bearer A21AAKD9uSRut66slYh067vlc1Sfwp2q_U7fKxcelSLzPRGZErt2v4Bb1WyX0MmkaFARP3rPHLZkuuTm7fUlIwQ5DzFe4y0iA",
     */
 
     let auth = base64.encode(request.processorConfig.clientId + ':' + request.processorConfig.clientSecret);
@@ -147,8 +144,6 @@ const PayPalConnection: ProcessorConnection<
     *     transactionStatus: 'AUTHORIZED'
     *   }
     * 
-    *   Client ID + Secret Auth giving me certificate errors so currently using access token
-    *     "Authorization": "Basic " + request.processorConfig.clientId + ':' + request.processorConfig.clientSecret,
     */
 
     let auth = base64.encode(request.processorConfig.clientId + ':' + request.processorConfig.clientSecret);
