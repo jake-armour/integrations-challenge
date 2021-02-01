@@ -2,7 +2,7 @@
 
 ## My Process
 
-I documented the work that i did over on notion, Susie has a link or email me at me@jakearmour.co.uk for the link!
+I documented the work that i did over on notion, go check out my process [here](https://www.notion.so/Integrations-Challenge-b38fc0e437d8408b9c2b8230af279505)!
 
 ## Get stuck in
 
