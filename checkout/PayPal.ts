@@ -98,11 +98,18 @@ const PayPalConnection: ProcessorConnection<
             }
           }
           break;
+        case 401:
+          authResponse = {
+            errorMessage: 'Invalid API credentials passed',
+            transactionStatus: 'FAILED'
+          }
+          break;
         case 422:
           authResponse = {
             errorMessage: json.name + ': ' + json.details.description,
             transactionStatus: 'FAILED'
           }
+          break;
         default:
           authResponse = {
             errorMessage: 'Issue with API call: No status code matched',
@@ -177,6 +184,13 @@ const PayPalConnection: ProcessorConnection<
             errorMessage: json.name + ': ' + json.details.description,
             transactionStatus: 'FAILED'
           }
+          break;
+        case 401:
+          voidResponse = {
+            errorMessage: 'Invalid API credentials passed',
+            transactionStatus: 'FAILED'
+          }
+          break;
         default:
           voidResponse = {
             errorMessage: 'Issue with API call: No status code matched',
